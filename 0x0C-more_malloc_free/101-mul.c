@@ -1,126 +1,169 @@
 #include "main.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <ctype.h>
 
 /**
- * _is_zero - determines if any number is zero
- * @argv: argument vector.
- *
- * Return: no return.
+ * str_ops - Performs some string operations
+ * @op: The operation to perform (0-> set length, 1-> fill bytes,
+ * 2-> left shift by one byte, 3-> print string and newline)
+ * @str: The source string
+ * @len: The pointer to the length of the string
+ * @n: The number of bytes to fill
+ * @c: The character to fill the positions with
  */
-void _is_zero(char *argv[])
+void str_ops(char op, char *str, int *len, int n, char c)
 {
-	int i, isn1 = 1, isn2 = 1;
+	int i;
 
-	for (i = 0; argv[1][i]; i++)
-		if (argv[1][i] != '0')
-		{
-			isn1 = 0;
-			break;
-		}
-
-	for (i = 0; argv[2][i]; i++)
-		if (argv[2][i] != '0')
-		{
-			isn2 = 0;
-			break;
-		}
-
-	if (isn1 == 1 || isn2 == 1)
+	if (op == 0)
 	{
-		printf("0\n");
-		exit(0);
+		*len = 0;
+		while (str != NULL && *(str + *len) != '\0')
+			*len += 1;
+	}
+	else if (op == 1)
+	{
+		for (i = 0; str != NULL && i < n; i++)
+			*(str + i) = c;
+	}
+	else if (op == 2)
+	{
+		for (i = 1; i <= n; i++)
+		{
+			str[i - 1] = str[i] != '\0' && str[i - 1] != '\0' ? str[i] : '\0';
+		}
+	}
+	else if (op == 3)
+	{
+		for (i = 0; str != NULL && *(str + i) != '\0'; i++)
+			_putchar(*(str + i));
+		_putchar('\n');
 	}
 }
 
 /**
- * _initialize_array - set memery to zero in a new array
- * @ar: char array.
- * @lar: length of the char array.
- *
- * Return: pointer of a char array.
+ * program_fail - Computes the program failure instructions
  */
-char *_initialize_array(char *ar, int lar)
+void program_fail(void)
 {
-	int i = 0;
-
-	for (i = 0; i < lar; i++)
-		ar[i] = '0';
-	ar[lar] = '\0';
-	return (ar);
+	str_ops(3, "Error", NULL, 0, '\0');
+	exit(98);
 }
 
 /**
- * _checknum - determines length of the number
- * and checks if number is in base 10.
- * @argv: arguments vector.
- * @n: row of the array.
+ * multiply - Computes the product of a number and a multiple of 10
+ * @num: The first number
+ * @multiple: The second number (a multiple of 10)
  *
- * Return: length of the number.
+ * Return: A pointer containing the result, otherwise program fails
  */
-int _checknum(char *argv[], int n)
+char *multiply(char *num, char *multiple)
 {
-	int ln;
+	int size, mult_len, num_len, i, j;
+	char *result, rem;
+	char carry = 0;
 
-	for (ln = 0; argv[n][ln]; ln++)
-		if (!isdigit(argv[n][ln]))
+	str_ops(0, multiple, &mult_len, 0, '\0');
+	str_ops(0, num, &num_len, 0, '\0');
+	size = mult_len + num_len;
+	result = malloc(sizeof(char) * (size + 1));
+	if (result != NULL)
+	{
+		str_ops(1, result, NULL, size, '0');
+		*(result + size) = '\0';
+		mult_len--;
+		j = size - mult_len - 1;
+		for (i = 1; i <= mult_len; i++)
+			*(result + size - i) = '0';
+		for (i = num_len - 1; i >= 0; i--)
 		{
-			printf("Error\n");
-			exit(98);
+			if (!(*(num + i) >= '0' && *(num + i) <= '9'))
+				program_fail();
+			if (!(*multiple >= '0' && *multiple <= '9'))
+				program_fail();
+			rem = ((*(num + i) - '0') * (*multiple - '0') + carry) % 10;
+			carry = ((*(num + i) - '0') * (*multiple - '0') + carry) / 10;
+			*(result + j) = rem + '0';
+			j--;
 		}
-
-	return (ln);
+		if (carry > 0)
+			*(result + j) = carry + '0';
+		if (*result == '0')
+			str_ops(2, result, NULL, size, '\0');
+		return (result);
+	}
+	program_fail();
+	return (NULL);
 }
 
 /**
- * main - Entry point.
- * program that multiplies two positive numbers.
- * @argc: number of arguments.
- * @argv: arguments vector.
+ * add - Adds two numbers and stores the result in the second number
+ * @num: The first number
+ * @r: The second number
+ * @size_r: The size of the result buffer
+ */
+void add(char *num, char *r, int size_r)
+{
+	int idx_num;
+	int idx_r;
+	char dig1;
+	char dig2;
+	char carry;
+	char rem;
+
+	str_ops(0, num, &idx_num, 0, '\0');
+	carry = 0;
+	idx_num--;
+	for (idx_r = size_r - 1; idx_r >= 0; idx_r--)
+	{
+		dig1 = idx_num >= 0 ? *(num + idx_num) - '0' : 0;
+		dig2 = idx_r >= 0 ? *(r + idx_r) - '0' : 0;
+		rem = (dig1 + dig2 + carry) % 10;
+		carry = (dig1 + dig2 + carry) / 10;
+		*(r + idx_r) = rem + '0';
+		idx_num--;
+	}
+}
+
+/**
+ * main - A program that computes the product of two numbers
+ * \ that are passed to it
+ * @argc: The number of command-line arguments
+ * @argv: The command-line arguments
  *
- * Return: 0 - success.
+ * Return: 0 if successful, otherwise 98
  */
 int main(int argc, char *argv[])
 {
-	int ln1, ln2, lnout, add, addl, i, j, k, ca;
-	char *nout;
+	char *num1, *num2, *result, *product;
+	int size, i, len2;
 
-	if (argc != 3)
-		printf("Error\n"), exit(98);
-	ln1 = _checknum(argv, 1), ln2 = _checknum(argv, 2);
-	_is_zero(argv), lnout = ln1 + ln2, nout = malloc(lnout + 1);
-	if (nout == NULL)
-		printf("Error\n"), exit(98);
-	nout = _initialize_array(nout, lnout);
-	k = lnout - 1, i = ln1 - 1, j = ln2 - 1, ca = addl = 0;
-	for (; k >= 0; k--, i--)
+	if (argc == 3)
 	{
-		if (i < 0)
+		num1 = argv[1];
+		num2 = argv[2];
+		str_ops(0, num1, &size, 0, '\0');
+		str_ops(0, num2, &len2, 0, '\0');
+		size += len2;
+		result = malloc(sizeof(char) * (size + 1));
+		if (result != NULL)
 		{
-			if (addl > 0)
+			str_ops(1, result, NULL, size, '0');
+			*(result + size) = '\0';
+			for (i = 0; i < len2; i++)
 			{
-				add = (nout[k] - '0') + addl;
-				if (add > 9)
-					nout[k - 1] = (add / 10) + '0';
-				nout[k] = (add % 10) + '0';
+				product = multiply(num1, num2 + i);
+				add(product, result, size);
+				free(product);
 			}
-			i = ln1 - 1, j--, addl = 0, ca++, k = lnout - (1 + ca);
+			while (*result == '0' && *(result + 1) != '\0')
+				str_ops(2, result, NULL, size, '\0');
+			str_ops(3, result, NULL, 0, '\0');
+			free(result);
+			return (0);
 		}
-		if (j < 0)
-		{
-			if (nout[0] != '0')
-				break;
-			lnout--;
-			free(nout), nout = malloc(lnout + 1), nout = _initialize_array(nout, lnout);
-			k = lnout - 1, i = ln1 - 1, j = ln2 - 1, ca = addl = 0;
-		}
-		if (j >= 0)
-		{
-			add = ((argv[1][i] - '0') * (argv[2][j] - '0')) + (nout[k] - '0') + addl;
-			addl = add / 10, nout[k] = (add % 10) + '0';
-		}
+		program_fail();
 	}
-	printf("%s\n", nout);
-	return (0);
+	program_fail();
+	return (98);
 }
