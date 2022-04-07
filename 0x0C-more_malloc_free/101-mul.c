@@ -1,7 +1,7 @@
 #include "main.h"
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <string.h>
 
 /**
  * str_ops - Performs some string operations
