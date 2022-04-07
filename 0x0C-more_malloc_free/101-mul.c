@@ -59,21 +59,21 @@ void program_fail(void)
  */
 char *multiply(char *num, char *multiple)
 {
-	int size, mult_len, num_len, i, j;
+	int size, mul_len, num_len, i, j;
 	char *result, rem;
 	char carry = 0;
 
-	str_ops(0, multiple, &mult_len, 0, '\0');
+	str_ops(0, multiple, &mul_len, 0, '\0');
 	str_ops(0, num, &num_len, 0, '\0');
-	size = mult_len + num_len;
+	size = mul_len + num_len;
 	result = malloc(sizeof(char) * (size + 1));
 	if (result != NULL)
 	{
 		str_ops(1, result, NULL, size, '0');
 		*(result + size) = '\0';
-		mult_len--;
-		j = size - mult_len - 1;
-		for (i = 1; i <= mult_len; i++)
+		mul_len--;
+		j = size - mul_len - 1;
+		for (i = 1; i <= mul_len; i++)
 			*(result + size - i) = '0';
 		for (i = num_len - 1; i >= 0; i--)
 		{
