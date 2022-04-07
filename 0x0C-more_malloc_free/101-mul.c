@@ -167,9 +167,6 @@ int main(int argc, char *argv[])
 	program_fail();
 	return (98);
 }
-#include "holberton.h"
-#include <stdlib.h>
-#include <stdio.h>
 
 /**
  * str_ops - Performs some string operations
