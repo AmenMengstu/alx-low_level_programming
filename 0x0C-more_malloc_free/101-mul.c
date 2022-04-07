@@ -1,170 +1,98 @@
 #include "main.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-
 /**
- * str_ops - Performs some string operations
- * @op: The operation to perform (0-> set length, 1-> fill bytes,
- * 2-> left shift by one byte, 3-> print string and newline)
- * @str: The source string
- * @len: The pointer to the length of the string
- * @n: The number of bytes to fill
- * @c: The character to fill the positions with
- */
-void str_ops(char op, char *str, int *len, int n, char c)
+* _isNum - check if is a number
+*@num: string to check
+*Return: 1 is numm, 0 not num
+*/
+int _isNum(char *num)
 {
 	int i;
 
-	if (op == 0)
+	for (i = 0; num[i] != '\0'; i++)
 	{
-		*len = 0;
-		while (str != NULL && *(str + *len) != '\0')
-			*len += 1;
+		if (num[i] < '0' || num[i] > '9')
+			return (0);
 	}
-	else if (op == 1)
-	{
-		for (i = 0; str != NULL && i < n; i++)
-			*(str + i) = c;
-	}
-	else if (op == 2)
-	{
-		for (i = 1; i <= n; i++)
-		{
-			str[i - 1] = str[i] != '\0' && str[i - 1] != '\0' ? str[i] : '\0';
-		}
-	}
-	else if (op == 3)
-	{
-		for (i = 0; str != NULL && *(str + i) != '\0'; i++)
-			_putchar(*(str + i));
-		_putchar('\n');
-	}
+	return (1);
 }
 
 /**
- * program_fail - Computes the program failure instructions
- */
-void program_fail(void)
+* *_memset - copies a character to the firstn characters of the string pointed
+*@s: original string
+*@b: value to remplace
+*@n: number of bytes
+*Return: s (string modify)
+*/
+char *_memset(char *s, char b, unsigned int n)
 {
-	str_ops(3, "Error", NULL, 0, '\0');
-	exit(98);
+	unsigned int i;
+
+	for (i = 0; i < n; i++)
+		s[i] = b;
+	return (s);
 }
 
 /**
- * multiply - Computes the product of a number and a multiple of 10
- * @num: The first number
- * @multiple: The second number (a multiple of 10)
- *
- * Return: A pointer containing the result, otherwise program fails
- */
-char *multiply(char *num, char *multiple)
+* _strlen - returns the lenght of a string
+*@s: poiter of character
+*Return: the length of a string
+*/
+int _strlen(char *s)
 {
-	int size, mult_len, num_len, i, j;
-	char *result, rem;
-	char carry = 0;
+	int len;
 
-	str_ops(0, multiple, &mult_len, 0, '\0');
-	str_ops(0, num, &num_len, 0, '\0');
-	size = mult_len + num_len;
-	result = malloc(sizeof(char) * (size + 1));
-	if (result != NULL)
-	{
-		str_ops(1, result, NULL, size, '0');
-		*(result + size) = '\0';
-		mult_len--;
-		j = size - mult_len - 1;
-		for (i = 1; i <= mult_len; i++)
-			*(result + size - i) = '0';
-		for (i = num_len - 1; i >= 0; i--)
-		{
-			if (!(*(num + i) >= '0' && *(num + i) <= '9'))
-				program_fail();
-			if (!(*multiple >= '0' && *multiple <= '9'))
-				program_fail();
-			rem = ((*(num + i) - '0') * (*multiple - '0') + carry) % 10;
-			carry = ((*(num + i) - '0') * (*multiple - '0') + carry) / 10;
-			*(result + j) = rem + '0';
-			j--;
-		}
-		if (carry > 0)
-			*(result + j) = carry + '0';
-		if (*result == '0')
-			str_ops(2, result, NULL, size, '\0');
-		return (result);
-	}
-	program_fail();
-	return (NULL);
+	len = 0;
+	while (*(s + len) != '\0')
+		len++;
+	return (len);
 }
 
 /**
- * add - Adds two numbers and stores the result in the second number
- * @num: The first number
- * @r: The second number
- * @size_r: The size of the result buffer
- */
-void add(char *num, char *r, int size_r)
-{
-	int idx_num;
-	int idx_r;
-	char dig1;
-	char dig2;
-	char carry;
-	char rem;
-
-	str_ops(0, num, &idx_num, 0, '\0');
-	carry = 0;
-	idx_num--;
-	for (idx_r = size_r - 1; idx_r >= 0; idx_r--)
-	{
-		dig1 = idx_num >= 0 ? *(num + idx_num) - '0' : 0;
-		dig2 = idx_r >= 0 ? *(r + idx_r) - '0' : 0;
-		rem = (dig1 + dig2 + carry) % 10;
-		carry = (dig1 + dig2 + carry) / 10;
-		*(r + idx_r) = rem + '0';
-		idx_num--;
-	}
-}
-
-/**
- * main - A program that computes the product of two numbers
- * \ that are passed to it
- * @argc: The number of command-line arguments
- * @argv: The command-line arguments
- *
- * Return: 0 if successful, otherwise 98
- */
+* main - multiple 2 positive numbers
+*@argc: argument counter
+*@argv: number to multiply
+*Return: 0 (success)
+*/
 int main(int argc, char *argv[])
 {
-	char *num1, *num2, *result, *product;
-	int size, i, len2;
+	int length, c, prod, i, j, l1, l2;
+	int *res;
 
-	if (argc == 3)
+	if ((argc != 3 || !(_isNum(argv[1]))) || !(_isNum(argv[2])))
+		puts("Error"), exit(98);
+	l1 = _strlen(argv[1]), l2 = _strlen(argv[2]);
+	length = l1 + l2;
+	res = calloc(length, sizeof(int *));
+	if (res == NULL)
+		puts("Error"), exit(98);
+	for (i = l2 - 1; i > -1; i--)
 	{
-		num1 = argv[1];
-		num2 = argv[2];
-		str_ops(0, num1, &size, 0, '\0');
-		str_ops(0, num2, &len2, 0, '\0');
-		size += len2;
-		result = malloc(sizeof(char) * (size + 1));
-		if (result != NULL)
+		c = 0;
+		for (j = l1; j > -1; j--)
 		{
-			str_ops(1, result, NULL, size, '0');
-			*(result + size) = '\0';
-			for (i = 0; i < len2; i++)
+			prod = (argv[2][i] - '0') * (argv[1][j] - '0');
+			c = (prod / 10);
+			res[(i + j) + 1] += (prod % 10);
+			if (res[(i + j) + 1] > 9)
 			{
-				product = multiply(num1, num2 + i);
-				add(product, result, size);
-				free(product);
+				res[i + j] += res[(i + j) + 1] / 10;
+				res[(i + j) + 1] = res[(i + j) + 1] % 10;
 			}
-			while (*result == '0' && *(result + 1) != '\0')
-				str_ops(2, result, NULL, size, '\0');
-			str_ops(3, result, NULL, 0, '\0');
-			free(result);
-			return (0);
+			res[(i + j) + 1] += c;
 		}
-		program_fail();
 	}
-	program_fail();
-	return (98);
+
+	if (res[0] == 0)
+		i = 1;
+	else
+		i = 0;
+	for (; i < length; i++)
+		printf("%d", res[i]);
+
+	printf("\n");
+	free(res);
+	return (0);
 }
