@@ -10,7 +10,7 @@
  * Return: newdog
  */
 
-dog_t *new_dog(char *name, float age, char *owner)
+dog_t *new_dog(char *name, float age, char *owner);
 {
 
 	int i = 0, j = 0, k;
