@@ -2,23 +2,21 @@
 #include <stdio.h>
 
 /**
- * print_strings - Prints strings followed by a new line
- * @separator: The string to be printed between the strings
- * @n: The number of strings that are passed
+ * print_numbers - Prints numbers followed by a new line
+ * @separator: The string to be printed between numbers
+ * @n: The number of arguments that are passed
  */
-void print_strings(const char *separator, const unsigned int n, ...)
+void print_numbers(const char *separator, const unsigned int n, ...)
 {
 	unsigned int i;
 	va_list args;
-	char *str;
 
 	va_start(args, n);
 	for (i = 0; i < n; i++)
 	{
-		str = va_arg(args, char *);
 		if (i > 0 && i < n && separator)
 			printf("%s", separator);
-		printf("%s", str ? str : "(nil)");
+		printf("%d", va_arg(args, int));
 	}
 	printf("\n");
 	va_end(args);
