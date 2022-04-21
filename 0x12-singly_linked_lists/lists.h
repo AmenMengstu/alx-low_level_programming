@@ -1,7 +1,7 @@
-#ifndef LIST_H
-#define LIST_H
-
+#ifndef _LIST_H_
+#define _LIST_H_
 #include <stdio.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -12,21 +12,20 @@
  * @next: points to the next node
  *
  * Description: singly linked list node structure
- * for alx projects
+ * for Holberton project
  */
-
 typedef struct list_s
 {
 	char *str;
 	unsigned int len;
 	struct list_s *next;
-}list_t;
+} list_t;
 
-int _strlen(const char *str);
+unsigned int _strlen(char *s);
 size_t print_list(const list_t *h);
 size_t list_len(const list_t *h);
 list_t *add_node(list_t **head, const char *str);
 list_t *add_node_end(list_t **head, const char *str);
 void free_list(list_t *head);
 
-#endif /*ifndef LIST_H*/
+#endif
