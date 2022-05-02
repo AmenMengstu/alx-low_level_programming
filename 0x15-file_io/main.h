@@ -1,6 +1,6 @@
  
  ​#​ifndef​ MAIN_H 
- ​#​define​ ​N_N 
+ ​#​define​ ​_N 
   
  ​#​include​ ​<​elf.h​> 
  ​#​include​ ​<​stdlib.h​> 
